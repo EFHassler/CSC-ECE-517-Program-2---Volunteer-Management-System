@@ -24,6 +24,20 @@
   </head>
 
   <body>
+    <header style="padding: 12px; border-bottom: 1px solid #ddd; margin-bottom: 16px;">
+      <nav>
+        <% if volunteer_signed_in? %>
+          <%= link_to "Profile", volunteer_path(current_volunteer) %> |
+          <%= link_to "Available events", available_events_path %> |
+          <%= button_to "Logout", logout_path, method: :delete, form: { style: 'display:inline' } %>
+        <% else %>
+          <%= link_to "Login", login_path %> |
+          <%= link_to "Sign up", new_volunteer_path %> |
+          <%= link_to "Available events", available_events_path %>
+        <% end %>
+      </nav>
+    </header>
+
     <%= yield %>
   </body>
 </html>

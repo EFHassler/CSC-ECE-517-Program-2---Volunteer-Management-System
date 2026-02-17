@@ -3,13 +3,13 @@
 one:
   volunteer: one
   event: one
-  status: MyString
-  hours_worked: 9.99
+  status: approved
+  hours_worked: 2.5
   date_logged: 2026-02-16
 
 two:
   volunteer: two
   event: two
-  status: MyString
-  hours_worked: 9.99
+  status: pending
+  hours_worked: 0.0
   date_logged: 2026-02-16

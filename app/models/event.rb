@@ -1,2 +1,31 @@
 class Event < ApplicationRecord
+  has_many :volunteer_assignments, dependent: :destroy
+  has_many :volunteers, through: :volunteer_assignments
+
+  validates :title, presence: true
+  validates :required_volunteers, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validate :start_before_end, if: -> { start_time.present? && end_time.present? }
+
+  def approved_assignments_count
+    volunteer_assignments.where(status: "approved").count
+  end
+
+  def slots_available?
+    return true if required_volunteers.blank?
+    approved_assignments_count < required_volunteers
+  end
+
+  def open?
+    status == "open"
+  end
+
+  def full?
+    status == "full"
+  end
+
+  private
+
+  def start_before_end
+    errors.add(:start_time, "must be before end time") if start_time >= end_time
+  end
 end

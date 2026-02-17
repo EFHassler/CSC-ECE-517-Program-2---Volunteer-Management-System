@@ -8,5 +8,5 @@
 
 <div>
   <%= link_to "Show this volunteer", @volunteer %> |
-  <%= link_to "Back to volunteers", volunteers_path %>
+  <%= link_to "Back", (volunteer_signed_in? ? volunteer_path(current_volunteer) : root_path) %>
 </div>

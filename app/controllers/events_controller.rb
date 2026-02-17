@@ -6,6 +6,13 @@ class EventsController < ApplicationController
     @events = Event.all
   end
 
+  # GET /events/available
+  # Shows only events that are open and have available slots
+  def available
+    @events = Event.where(status: "open").select(&:slots_available?)
+    render :index
+  end
+
   # GET /events/1 or /events/1.json
   def show
   end
@@ -60,11 +67,11 @@ class EventsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_event
-      @event = Event.find(params.expect(:id))
+      @event = Event.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def event_params
-      params.expect(event: [ :title, :description, :location, :event_date, :start_time, :end_time, :required_volunteers, :status ])
+      params.require(:event).permit(:title, :description, :location, :event_date, :start_time, :end_time, :required_volunteers, :status)
     end
 end

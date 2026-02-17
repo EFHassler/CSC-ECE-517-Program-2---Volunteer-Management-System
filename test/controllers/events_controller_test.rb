@@ -10,6 +10,15 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get available and show only events with slots" do
+    get available_events_url
+    assert_response :success
+
+    # events(:one) has an approved assignment in fixtures and should be full; events(:two) should be available
+    assert_includes assigns(:events), events(:two)
+    assert_not_includes assigns(:events), events(:one)
+  end
+
   test "should get new" do
     get new_event_url
     assert_response :success

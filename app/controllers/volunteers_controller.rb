@@ -1,9 +1,16 @@
 class VolunteersController < ApplicationController
   before_action :set_volunteer, only: %i[ show edit update destroy ]
+  before_action :require_volunteer_login, only: %i[ show edit update destroy ]
+  before_action :authorize_volunteer, only: %i[ show edit update destroy ]
 
   # GET /volunteers or /volunteers.json
+  # Only admins should be able to view the full volunteers list. Redirect everyone else.
   def index
-    @volunteers = Volunteer.all
+    if session[:admin_id].present?
+      @volunteers = Volunteer.all
+    else
+      redirect_to root_path, alert: "Access denied"
+    end
   end
 
   # GET /volunteers/1 or /volunteers/1.json
@@ -25,6 +32,7 @@ class VolunteersController < ApplicationController
 
     respond_to do |format|
       if @volunteer.save
+        session[:volunteer_id] = @volunteer.id
         format.html { redirect_to @volunteer, notice: "Volunteer was successfully created." }
         format.json { render :show, status: :created, location: @volunteer }
       else
@@ -37,7 +45,7 @@ class VolunteersController < ApplicationController
   # PATCH/PUT /volunteers/1 or /volunteers/1.json
   def update
     respond_to do |format|
-      if @volunteer.update(volunteer_params)
+      if @volunteer.update(volunteer_update_params)
         format.html { redirect_to @volunteer, notice: "Volunteer was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @volunteer }
       else
@@ -50,9 +58,10 @@ class VolunteersController < ApplicationController
   # DELETE /volunteers/1 or /volunteers/1.json
   def destroy
     @volunteer.destroy!
+    reset_session if session[:volunteer_id] == @volunteer.id
 
     respond_to do |format|
-      format.html { redirect_to volunteers_path, notice: "Volunteer was successfully destroyed.", status: :see_other }
+      format.html { redirect_to root_path, notice: "Volunteer was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end
@@ -60,11 +69,20 @@ class VolunteersController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_volunteer
-      @volunteer = Volunteer.find(params.expect(:id))
+      @volunteer = Volunteer.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+    def authorize_volunteer
+      require_same_volunteer!(@volunteer)
+    end
+
+    # Only allow a list of trusted parameters through for create.
     def volunteer_params
-      params.expect(volunteer: [ :username, :password_digest, :full_name, :email, :phone, :address, :skills ])
+      params.require(:volunteer).permit(:username, :password, :password_confirmation, :full_name, :email, :phone, :address, :skills)
+    end
+
+    # Parameters allowed when a volunteer updates their profile (username cannot be changed)
+    def volunteer_update_params
+      params.require(:volunteer).permit(:password, :password_confirmation, :full_name, :email, :phone, :address, :skills)
     end
 end

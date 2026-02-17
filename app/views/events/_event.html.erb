@@ -35,8 +35,29 @@
   </div>
 
   <div>
+    <strong>Assigned volunteers (approved):</strong>
+    <%= event.approved_assignments_count %>
+  </div>
+
+  <div>
     <strong>Status:</strong>
     <%= event.status %>
   </div>
 
+  <% if defined?(current_volunteer) && current_volunteer %>
+    <% assignment = current_volunteer.volunteer_assignments.find_by(event: event) %>
+    <div>
+      <% if assignment %>
+        <em>Your status:</em> <%= assignment.status %>
+        <% if assignment.status != 'completed' %>
+          <%= button_to 'Withdraw', volunteer_assignment_path(assignment), method: :delete %>
+        <% end %>
+      <% elsif event.open? && event.slots_available? %>
+        <%= form_with url: volunteer_assignments_path, local: true do |f| %>
+          <%= hidden_field_tag 'volunteer_assignment[event_id]', event.id %>
+          <%= f.submit 'Sign up' %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

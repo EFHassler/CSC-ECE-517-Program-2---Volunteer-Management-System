@@ -5,11 +5,6 @@
   </div>
 
   <div>
-    <strong>Password digest:</strong>
-    <%= volunteer.password_digest %>
-  </div>
-
-  <div>
     <strong>Full name:</strong>
     <%= volunteer.full_name %>
   </div>
@@ -32,6 +27,42 @@
   <div>
     <strong>Skills:</strong>
     <%= volunteer.skills %>
+  </div>
+
+  <div>
+    <strong>Total hours:</strong>
+    <%= volunteer.total_hours %>
+  </div>
+
+  <div>
+    <p>
+      <%= link_to "Available events", available_events_path if volunteer_signed_in? %>
+    </p>
+  </div>
+
+  <div>
+    <strong>Current assignments:</strong>
+    <ul>
+      <% volunteer.volunteer_assignments.where.not(status: 'completed').each do |a| %>
+        <li>
+          <%= link_to a.event.title, a.event if a.event %> — <%= a.status %>
+          <% if defined?(current_volunteer) && current_volunteer == volunteer %>
+            <%= button_to 'Withdraw', volunteer_assignment_path(a), method: :delete %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div>
+    <strong>Volunteering history:</strong>
+    <ul>
+      <% volunteer.volunteer_assignments.where(status: 'completed').each do |a| %>
+        <li>
+          <%= a.event&.title %> — <%= a.hours_worked %> hrs on <%= a.date_logged %>
+        </li>
+      <% end %>
+    </ul>
   </div>
 
 </div>
