@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @volunteer_assignment %>
+
+<div>
+  <%= link_to "Edit this volunteer assignment", edit_volunteer_assignment_path(@volunteer_assignment) %> |
+  <%= link_to "Back to volunteer assignments", volunteer_assignments_path %>
+
+  <%= button_to "Destroy this volunteer assignment", @volunteer_assignment, method: :delete %>
+</div>

@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Volunteer assignments" %>
+
+<h1>Volunteer assignments</h1>
+
+<div id="volunteer_assignments">
+  <% @volunteer_assignments.each do |volunteer_assignment| %>
+    <%= render volunteer_assignment %>
+    <p>
+      <%= link_to "Show this volunteer assignment", volunteer_assignment %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New volunteer assignment", new_volunteer_assignment_path %>

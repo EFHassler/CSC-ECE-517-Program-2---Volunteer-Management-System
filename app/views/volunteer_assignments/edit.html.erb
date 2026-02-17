@@ -1,0 +1,12 @@
+<% content_for :title, "Editing volunteer assignment" %>
+
+<h1>Editing volunteer assignment</h1>
+
+<%= render "form", volunteer_assignment: @volunteer_assignment %>
+
+<br>
+
+<div>
+  <%= link_to "Show this volunteer assignment", @volunteer_assignment %> |
+  <%= link_to "Back to volunteer assignments", volunteer_assignments_path %>
+</div>
