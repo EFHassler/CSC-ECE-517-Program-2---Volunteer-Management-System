@@ -9,6 +9,9 @@
     <%= render volunteer %>
     <p>
       <%= link_to "Show this volunteer", volunteer %>
+      <% if admin_signed_in? %>
+        | <%= button_to "Delete this volunteer", volunteer, method: :delete, data: { confirm: "Are you sure?" } %>
+      <% end %>
     </p>
   <% end %>
 </div>

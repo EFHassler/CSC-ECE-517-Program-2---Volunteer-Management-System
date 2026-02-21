@@ -1,7 +1,7 @@
 class VolunteersController < ApplicationController
   before_action :set_volunteer, only: %i[ show edit update destroy ]
-  before_action :require_volunteer_login, only: %i[ show edit update destroy ]
-  before_action :authorize_volunteer, only: %i[ show edit update destroy ]
+  before_action :require_volunteer_or_admin_login, only: %i[ show edit update destroy ]
+  before_action :authorize_volunteer_or_admin, only: %i[ show edit update destroy ]
 
   # GET /volunteers or /volunteers.json
   # Only admins should be able to view the full volunteers list. Redirect everyone else.
@@ -74,6 +74,19 @@ class VolunteersController < ApplicationController
 
     def authorize_volunteer
       require_same_volunteer!(@volunteer)
+    end
+
+    def require_volunteer_or_admin_login
+      unless volunteer_signed_in? || admin_signed_in?
+        redirect_to login_path, alert: "Please log in"
+      end
+    end
+
+    def authorize_volunteer_or_admin
+      # Allow if admin or if the volunteer is viewing/editing their own profile
+      unless admin_signed_in? || (volunteer_signed_in? && current_volunteer == @volunteer)
+        redirect_to root_path, alert: "Access denied"
+      end
     end
 
     # Only allow a list of trusted parameters through for create.
