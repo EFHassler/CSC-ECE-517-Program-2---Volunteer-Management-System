@@ -1,5 +1,6 @@
 class AdminsController < ApplicationController
   before_action :set_admin, only: %i[ show edit update destroy ]
+  before_action :require_admin_login, only: %i[ index show edit update ]
 
   # GET /admins or /admins.json
   def index
@@ -37,7 +38,7 @@ class AdminsController < ApplicationController
   # PATCH/PUT /admins/1 or /admins/1.json
   def update
     respond_to do |format|
-      if @admin.update(admin_params)
+      if @admin.update(admin_update_params)
         format.html { redirect_to @admin, notice: "Admin was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @admin }
       else
@@ -49,11 +50,10 @@ class AdminsController < ApplicationController
 
   # DELETE /admins/1 or /admins/1.json
   def destroy
-    @admin.destroy!
-
+    # Prevent deleting the admin account
     respond_to do |format|
-      format.html { redirect_to admins_path, notice: "Admin was successfully destroyed.", status: :see_other }
-      format.json { head :no_content }
+      format.html { redirect_to admins_path, alert: "Admin account cannot be deleted.", status: :see_other }
+      format.json { render json: { error: "Admin account cannot be deleted" }, status: :unprocessable_entity }
     end
   end
 
@@ -63,8 +63,13 @@ class AdminsController < ApplicationController
       @admin = Admin.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
+    # Only allow a list of trusted parameters through for create.
     def admin_params
-      params.expect(admin: [ :username, :password_digest, :name, :email ])
+      params.expect(admin: [ :username, :password, :password_confirmation, :name, :email ])
+    end
+
+    # Parameters for update (cannot change username)
+    def admin_update_params
+      params.expect(admin: [ :password, :password_confirmation, :name, :email ])
     end
 end

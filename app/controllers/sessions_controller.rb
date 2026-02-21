@@ -16,9 +16,9 @@ class SessionsController < ApplicationController
       return
     end
 
-    # If not volunteer, check if it's the admin (there's only one admin)
-    admin = Admin.first
-    if admin && admin.username == username && admin.authenticate(password)
+    # If not volunteer, check if it's the admin (preconfigured username "admin")
+    admin = Admin.find_by(username: "admin")
+    if admin && admin.authenticate(password)
       session[:admin_id] = admin.id
       redirect_to admins_path, notice: "Logged in successfully as admin."
       return

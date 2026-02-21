@@ -5,6 +5,7 @@ class Volunteer < ApplicationRecord
   has_many :events, through: :volunteer_assignments
 
   validates :username, presence: true, uniqueness: true
+  validates :password, presence: true, on: :create
   validates :full_name, presence: true
   validates :email, presence: true, uniqueness: true,
             format: { with: URI::MailTo::EMAIL_REGEXP }

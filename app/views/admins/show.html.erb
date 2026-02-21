@@ -4,7 +4,8 @@
 
 <div>
   <%= link_to "Edit this admin", edit_admin_path(@admin) %> |
+  <%= link_to "View volunteers", volunteers_path %> |
+  <%= link_to "View events", events_path %> |
+  <%= link_to "View assignments", volunteer_assignments_path %> |
   <%= link_to "Back to admins", admins_path %>
-
-  <%= button_to "Destroy this admin", @admin, method: :delete %>
 </div>

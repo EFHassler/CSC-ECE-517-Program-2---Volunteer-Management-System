@@ -32,6 +32,20 @@ class VolunteerAssignment < ApplicationRecord
   def update_event_status!
     return unless event
 
+    if saved_change_to_status? && status == "approved" && status_was != "approved"
+      # Decrease required_volunteers when approving
+      if event.required_volunteers > 0
+        event.update(required_volunteers: event.required_volunteers - 1)
+      end
+    elsif destroyed? && status_was == "approved"
+      # Increase required_volunteers when approved assignment is destroyed
+      event.update(required_volunteers: event.required_volunteers + 1)
+    elsif saved_change_to_status? && status_was == "approved" && status != "approved"
+      # Increase required_volunteers when status changes away from approved
+      event.update(required_volunteers: event.required_volunteers + 1)
+    end
+
+    # Update event status based on approved count
     approved_count = event.volunteer_assignments.where(status: "approved").count
     if event.required_volunteers.present? && approved_count >= event.required_volunteers
       event.update(status: "full") if event.status != "completed"

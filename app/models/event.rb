@@ -2,6 +2,9 @@ class Event < ApplicationRecord
   has_many :volunteer_assignments, dependent: :destroy
   has_many :volunteers, through: :volunteer_assignments
 
+  # Status constants
+  STATUSES = %w[open full completed].freeze
+
   # Required field validations
   validates :title, presence: true
   validates :description, presence: true
@@ -9,14 +12,11 @@ class Event < ApplicationRecord
   validates :event_date, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true
-  validates :required_volunteers, numericality: { only_integer: true, greater_than: 0 }
-  validates :status, presence: true
+  validates :required_volunteers, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :status, presence: true, inclusion: { in: STATUSES }
 
   # Custom validations
   validate :start_before_end, if: -> { start_time.present? && end_time.present? }
-
-  # Status constants
-  STATUSES = %w[open full completed].freeze
 
   def approved_assignments_count
     volunteer_assignments.where(status: "approved").count
