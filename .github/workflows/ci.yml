@@ -8,34 +8,52 @@ on:
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
-
     steps:
+<<<<<<< HEAD
+      - uses: actions/checkout@v4
+=======
       - name: Checkout code
         uses: actions/checkout@v6
+>>>>>>> parent of 743b938 (CI testing fixes)
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+      - run: bundle exec brakeman --no-pager
+      - run: bundle exec bundler-audit
+
+=======
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
       
       - name: Scan for known security vulnerabilities in gems used
         run: bin/bundler-audit
       
+>>>>>>> parent of 743b938 (CI testing fixes)
   scan_js:
     runs-on: ubuntu-latest
-
     steps:
+<<<<<<< HEAD
+      - uses: actions/checkout@v4
+=======
       - name: Checkout code
         uses: actions/checkout@v6
+>>>>>>> parent of 743b938 (CI testing fixes)
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+      - run: bundle exec importmap audit
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+=======
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
 
@@ -46,12 +64,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+>>>>>>> parent of 743b938 (CI testing fixes)
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+      - run: bundle exec rubocop -f github
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+=======
       - name: Prepare RuboCop cache
         uses: actions/cache@v4
         env:
@@ -77,12 +103,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+>>>>>>> parent of 743b938 (CI testing fixes)
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+      - run: bundle exec rails db:test:prepare test
+
+  system-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+=======
       - name: Run tests
         env:
           RAILS_ENV: test
@@ -102,12 +136,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+>>>>>>> parent of 743b938 (CI testing fixes)
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: bundle exec rails db:test:prepare test:system
+=======
       - name: Run System Tests
         env:
           RAILS_ENV: test
@@ -122,3 +163,4 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+>>>>>>> parent of 743b938 (CI testing fixes)
