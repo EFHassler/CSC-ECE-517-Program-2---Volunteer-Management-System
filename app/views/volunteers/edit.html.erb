@@ -9,4 +9,7 @@
 <div>
   <%= link_to "Show this volunteer", @volunteer %> |
   <%= link_to "Back", (volunteer_signed_in? ? volunteer_path(current_volunteer) : root_path) %>
+  <% if admin_signed_in? && !volunteer_signed_in? %>
+    | <%= link_to "Back to Admin", admin_path %>
+  <% end %>
 </div>
