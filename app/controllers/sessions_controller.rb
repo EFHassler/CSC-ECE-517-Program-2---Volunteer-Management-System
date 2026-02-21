@@ -20,7 +20,7 @@ class SessionsController < ApplicationController
     admin = Admin.find_by(username: "admin")
     if admin && admin.authenticate(password)
       session[:admin_id] = admin.id
-      redirect_to admins_path, notice: "Logged in successfully as admin."
+      redirect_to admin_path, notice: "Logged in successfully as admin."
       return
     end
 

@@ -5,8 +5,18 @@ Rails.application.routes.draw do
       get :available
     end
   end
-  resources :admins
+  resources :admins, only: []  # No standard routes - we use custom ones below
   resources :volunteers
+
+  # Custom admin routes - must be before resources to avoid conflicts
+  get "admin", to: "admins#index", as: :admin
+  get "admin/profile", to: "admins#show", defaults: { id: 1 }
+  get "admin/profile/edit", to: "admins#edit", defaults: { id: 1 }
+  patch "admin/profile", to: "admins#update"
+  put "admin/profile", to: "admins#update"
+
+  # Analytics route
+  get "analytics", to: "analytics#index", as: :analytics
 
   get "login", to: "sessions#new", as: :login
   post "login", to: "sessions#create"

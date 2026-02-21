@@ -5,6 +5,9 @@
 <div>
   <%= link_to "Edit this volunteer assignment", edit_volunteer_assignment_path(@volunteer_assignment) %> |
   <%= link_to "Back to volunteer assignments", volunteer_assignments_path %>
+  <% if admin_signed_in? && !volunteer_signed_in? %>
+    | <%= link_to "Back to Admin", admin_path %>
+  <% end %>
 
   <%= button_to "Destroy this volunteer assignment", @volunteer_assignment, method: :delete %>
 </div>

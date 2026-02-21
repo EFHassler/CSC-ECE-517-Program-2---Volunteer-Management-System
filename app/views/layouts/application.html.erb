@@ -26,7 +26,12 @@
   <body>
     <header style="padding: 12px; border-bottom: 1px solid #ddd; margin-bottom: 16px;">
       <nav>
-        <% if volunteer_signed_in? %>
+        <% if admin_signed_in? %>
+          <%= link_to "Admin Dashboard", admin_path %> |
+          <%= link_to "Events", events_path %> |
+          <%= link_to "Volunteers", volunteers_path %> |
+          <%= button_to "Logout", logout_path, method: :delete, form: { style: 'display:inline' } %>
+        <% elsif volunteer_signed_in? %>
           <%= link_to "Profile", volunteer_path(current_volunteer) %> |
           <%= link_to "Available events", available_events_path %> |
           <%= button_to "Logout", logout_path, method: :delete, form: { style: 'display:inline' } %>

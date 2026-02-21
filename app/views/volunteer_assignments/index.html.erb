@@ -14,3 +14,6 @@
 </div>
 
 <%= link_to "New volunteer assignment", new_volunteer_assignment_path %>
+<% if admin_signed_in? && !volunteer_signed_in? %>
+  | <%= link_to "Back to Admin", admin_path %>
+<% end %>

@@ -6,7 +6,7 @@ one:
   location: MyString
   event_date: 2026-02-16
   start_time: 2026-02-16 21:14:53
-  end_time: 2026-02-16 21:14:53
+  end_time: 2026-02-16 22:14:53
   required_volunteers: 1
   status: open
 
@@ -16,6 +16,6 @@ two:
   location: MyString
   event_date: 2026-02-16
   start_time: 2026-02-16 21:14:53
-  end_time: 2026-02-16 21:14:53
+  end_time: 2026-02-16 22:14:53
   required_volunteers: 1
   status: open

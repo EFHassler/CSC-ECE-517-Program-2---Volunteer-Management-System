@@ -1,0 +1,136 @@
+<% content_for :title, "Analytics" %>
+
+<h1>Volunteer Analytics</h1>
+
+<%= link_to "Back to Admin", admin_path %>
+
+<h2>Filters</h2>
+<%= form_tag analytics_path, method: :get do %>
+  <div>
+    <%= label_tag :date_from, "From Date:" %>
+    <%= date_field_tag :date_from, @date_from %>
+  </div>
+  <div>
+    <%= label_tag :date_to, "To Date:" %>
+    <%= date_field_tag :date_to, @date_to %>
+  </div>
+  <div>
+    <%= label_tag :event_id, "Event:" %>
+    <%= select_tag :event_id, options_from_collection_for_select(@events, :id, :title, @selected_event_id), include_blank: "All Events" %>
+  </div>
+  <div>
+    <%= label_tag :volunteer_id, "Volunteer:" %>
+    <%= select_tag :volunteer_id, options_from_collection_for_select(@volunteers, :id, :full_name, @selected_volunteer_id), include_blank: "All Volunteers" %>
+  </div>
+  <div>
+    <%= label_tag :top_n, "Top N Volunteers:" %>
+    <%= number_field_tag :top_n, params[:top_n] || 10, min: 1, max: 50 %>
+  </div>
+  <div>
+    <%= submit_tag "Apply Filters" %>
+  </div>
+<% end %>
+
+<h2>Volunteer Activity Summary</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Volunteer</th>
+      <th>Events Participated</th>
+      <th>Total Hours</th>
+      <th>Avg Hours per Event</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @volunteer_activities.each do |activity| %>
+      <tr>
+        <td><%= activity[:volunteer].full_name %></td>
+        <td><%= activity[:event_count] %></td>
+        <td><%= activity[:total_hours] %></td>
+        <td><%= activity[:avg_hours_per_event] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Event Participation Summary</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Volunteers</th>
+      <th>Total Hours</th>
+      <th>Avg Hours per Volunteer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @event_participations.each do |participation| %>
+      <tr>
+        <td><%= participation[:event].title %></td>
+        <td><%= participation[:volunteer_count] %></td>
+        <td><%= participation[:total_hours] %></td>
+        <td><%= participation[:avg_hours_per_volunteer] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Top Volunteers by Hours</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Volunteer</th>
+      <th>Total Hours</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @top_volunteers_by_hours.each_with_index do |activity, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= activity[:volunteer].full_name %></td>
+        <td><%= activity[:total_hours] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Top Volunteers by Events</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Volunteer</th>
+      <th>Events Participated</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @top_volunteers_by_events.each_with_index do |activity, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= activity[:volunteer].full_name %></td>
+        <td><%= activity[:event_count] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Low Participation Detection - Volunteers with No Completed Events</h2>
+<% if @no_participation_volunteers.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Volunteer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @no_participation_volunteers.each do |activity| %>
+        <tr>
+          <td><%= activity[:volunteer].full_name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>All volunteers have participated in at least one event.</p>
+<% end %>
