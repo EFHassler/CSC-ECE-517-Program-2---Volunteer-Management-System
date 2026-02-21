@@ -36,7 +36,7 @@ class AnalyticsController < ApplicationController
         event_count = volunteer_assignments.count
         total_hrs = volunteer_assignments.sum(:hours_worked).to_f
         avg_hrs = event_count > 0 ? (total_hrs / event_count).round(2) : 0
-        
+
         {
           volunteer: v,
           event_count: event_count,
@@ -56,7 +56,7 @@ class AnalyticsController < ApplicationController
         volunteer_count = event_assignments.count
         total_hrs = event_assignments.sum(:hours_worked).to_f
         avg_hrs = volunteer_count > 0 ? (total_hrs / volunteer_count).round(2) : 0
-        
+
         {
           event: e,
           volunteer_count: volunteer_count,

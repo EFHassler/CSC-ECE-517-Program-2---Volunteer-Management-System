@@ -58,7 +58,10 @@ class VolunteerAssignmentsController < ApplicationController
   # PATCH/PUT /volunteer_assignments/1 or /volunteer_assignments/1.json
   # Only admin may change status/hours
   def update
-    require_admin_login
+    unless admin_signed_in?
+      redirect_to root_path, alert: "Admin access required"
+      return
+    end
 
     respond_to do |format|
       if @volunteer_assignment.update(volunteer_assignment_params)

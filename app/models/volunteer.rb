@@ -13,11 +13,11 @@ class Volunteer < ApplicationRecord
 
   # Returns total hours from approved and completed assignments (float)
   def total_hours
-    volunteer_assignments.where(status: ["approved", "completed"]).sum(:hours_worked).to_f
+    volunteer_assignments.where(status: [ "approved", "completed" ]).sum(:hours_worked).to_f
   end
 
   # Returns total hours from approved and completed assignments (includes both approved and completed)
   def completed_hours
-    volunteer_assignments.where(status: ["approved", "completed"]).sum(:hours_worked).to_f
+    volunteer_assignments.where(status: [ "approved", "completed" ]).sum(:hours_worked).to_f
   end
 end

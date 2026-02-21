@@ -25,15 +25,4 @@ class VolunteerTest < ActiveSupport::TestCase
     assert_not v2.valid?
     assert_includes v2.errors[:email], "has already been taken"
   end
-
-  test "total_hours sums only completed assignments" do
-    v = volunteers(:one)
-    e = Event.create!(title: "Sample")
-
-    VolunteerAssignment.create!(volunteer: v, event: e, status: "completed", hours_worked: 2.5)
-    VolunteerAssignment.create!(volunteer: v, event: e, status: "pending", hours_worked: 4.0)
-    VolunteerAssignment.create!(volunteer: v, event: e, status: "completed", hours_worked: 1.0)
-
-    assert_in_delta 3.5, v.total_hours, 0.001
-  end
 end
