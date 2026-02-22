@@ -1,0 +1,16 @@
+<% content_for :title, "Available events" %>
+
+<h1>Available events</h1>
+
+<p>Events that are open and currently have available slots.</p>
+
+<div id="events">
+  <% @events.each do |event| %>
+    <%= render event %>
+    <p>
+      <%= link_to "Show this event", event %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "Back to events", events_path %>
