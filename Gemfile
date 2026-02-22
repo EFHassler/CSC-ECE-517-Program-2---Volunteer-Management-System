@@ -69,3 +69,11 @@ group :test do
   # REQUIRED for Rails 8 controller tests
   gem "rails-controller-testing"
 end
+
+group :development, :test do
+  gem "rspec-rails", "~> 8.0"
+end
+
+group :test do
+  gem "shoulda-matchers", "~> 7.0"
+end
