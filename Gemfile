@@ -77,3 +77,7 @@ end
 group :test do
   gem "shoulda-matchers", "~> 7.0"
 end
+
+group :development, :test do
+  gem "factory_bot_rails"
+end
