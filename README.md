@@ -189,3 +189,18 @@ The analytics page shows:
 - **Authorization**: Different access levels for volunteers and admins
 - **Database**: SQLite3 (can be changed to PostgreSQL/MySQL)
 - **Status Workflow**: Events can be Open → Full → Completed
+
+## Testing
+
+RSpec validation testing of Volunteer class model aspects:
+- password
+- associations
+- username
+- full_name
+- email
+- phone
+- Volunteer class methods (total_hours, completed_hours)
+
+RSpec testing of Volunteer class controller:
+- New
+- Create
