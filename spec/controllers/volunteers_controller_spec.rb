@@ -1,4 +1,3 @@
-#require "test_helper"
 require 'rails_helper'
 
 RSpec.describe VolunteersController, type: :request do
