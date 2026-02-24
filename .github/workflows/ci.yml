@@ -28,7 +28,7 @@ jobs:
           bundler-cache: true
 
       # Skip importmap audit as it's not available - using npm audit instead for JS security
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
 
@@ -65,7 +65,7 @@ jobs:
         with:
           bundler-cache: true
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '20'
 
