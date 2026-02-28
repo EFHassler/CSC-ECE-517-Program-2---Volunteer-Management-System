@@ -11,9 +11,10 @@ Rails.application.routes.draw do
   # Custom admin routes - must be before resources to avoid conflicts
   get "admin", to: "admins#index", as: :admin
   get "admin/profile", to: "admins#show", defaults: { id: 1 }
-  get "admin/profile/edit", to: "admins#edit", defaults: { id: 1 }
+  get "admin/profile/edit", to: "admins#edit", defaults: { id: 1 }, as: :edit_admin_profile
   patch "admin/profile", to: "admins#update"
   put "admin/profile", to: "admins#update"
+  get "admin/pending-assignments", to: "admins#pending_assignments", as: :admin_pending_assignments
 
   # Analytics route
   get "analytics", to: "analytics#index", as: :analytics
@@ -32,6 +33,6 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/") — show volunteer login first
+  # Defines the root path route ("/") — show login first
   root "sessions#new"
 end

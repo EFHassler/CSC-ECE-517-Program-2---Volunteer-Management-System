@@ -26,7 +26,7 @@ class AdminsController < ApplicationController
 
     respond_to do |format|
       if @admin.save
-        format.html { redirect_to @admin, notice: "Admin was successfully created." }
+        format.html { redirect_to login_path, notice: "Admin account created. Please log in." }
         format.json { render :show, status: :created, location: @admin }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,14 +38,29 @@ class AdminsController < ApplicationController
   # PATCH/PUT /admins/1 or /admins/1.json
   def update
     respond_to do |format|
-      if @admin.update(admin_update_params)
-        format.html { redirect_to @admin, notice: "Admin was successfully updated.", status: :see_other }
+      # Get params and convert to hash for manipulation
+      update_params = admin_update_params.to_h
+
+      # Remove password fields if blank
+      if update_params[:password].blank?
+        update_params.delete(:password)
+        update_params.delete(:password_confirmation)
+      end
+
+      if @admin.update(update_params)
+        format.html { redirect_to admin_path, notice: "Admin profile was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @admin }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @admin.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  # GET /admin/pending-assignments
+  def pending_assignments
+    require_admin_login
+    @pending_assignments = VolunteerAssignment.where(status: "pending")
   end
 
   # DELETE /admins/1 or /admins/1.json
@@ -58,9 +73,11 @@ class AdminsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_admin
-      @admin = Admin.find(params.expect(:id))
+      @admin = current_admin
+      unless @admin
+        redirect_to login_path, alert: "Please log in as admin."
+      end
     end
 
     # Only allow a list of trusted parameters through for create.

@@ -1,19 +1,20 @@
 class EventsController < ApplicationController
   before_action :set_event, only: %i[ show edit update destroy ]
+  before_action :require_admin_login, only: %i[ new create edit update destroy show ]
+  before_action :ensure_admin_for_index, only: %i[ index ]
 
-  # GET /events or /events.json
+  # GET /events or /events.json (admin only - all events)
   def index
     @events = Event.all
   end
 
-  # GET /events/available
-  # Shows only events that are open and have available slots
+  # GET /events/available (public - open events with slots)
   def available
     @events = Event.where(status: "open").select(&:slots_available?)
     render :index
   end
 
-  # GET /events/1 or /events/1.json
+  # GET /events/1 or /events/1.json (admin only)
   def show
   end
 
@@ -32,7 +33,7 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       if @event.save
-        format.html { redirect_to @event, notice: "Event was successfully created." }
+        format.html { redirect_to events_path, notice: "Event was successfully created." }
         format.json { render :show, status: :created, location: @event }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -45,7 +46,7 @@ class EventsController < ApplicationController
   def update
     respond_to do |format|
       if @event.update(event_params)
-        format.html { redirect_to @event, notice: "Event was successfully updated.", status: :see_other }
+        format.html { redirect_to events_path, notice: "Event was successfully updated." }
         format.json { render :show, status: :ok, location: @event }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -59,7 +60,7 @@ class EventsController < ApplicationController
     @event.destroy!
 
     respond_to do |format|
-      format.html { redirect_to events_path, notice: "Event was successfully destroyed.", status: :see_other }
+      format.html { redirect_to events_path, notice: "Event was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -68,6 +69,12 @@ class EventsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_event
       @event = Event.find(params[:id])
+    end
+
+    def ensure_admin_for_index
+      unless admin_signed_in?
+        redirect_to available_events_path, alert: "Please use the available events page."
+      end
     end
 
     # Only allow a list of trusted parameters through.

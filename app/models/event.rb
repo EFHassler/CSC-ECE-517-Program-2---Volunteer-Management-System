@@ -12,7 +12,7 @@ class Event < ApplicationRecord
   validates :event_date, presence: true
   validates :start_time, presence: true
   validates :end_time, presence: true
-  validates :required_volunteers, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :required_volunteers, numericality: { only_integer: true, greater_than: 0 }
   validates :status, presence: true, inclusion: { in: STATUSES }
 
   # Custom validations

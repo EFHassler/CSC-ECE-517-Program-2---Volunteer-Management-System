@@ -44,6 +44,23 @@
     <%= event.status %>
   </div>
 
+  <% if admin_signed_in? %>
+    <div>
+      <h4>Assign a volunteer</h4>
+      <%= form_with url: volunteer_assignments_path, local: true do |f| %>
+        <%= hidden_field_tag 'volunteer_assignment[event_id]', event.id %>
+        <div>
+          <%= label_tag 'volunteer_assignment[volunteer_id]', 'Volunteer' %>
+          <%= select_tag 'volunteer_assignment[volunteer_id]', options_from_collection_for_select(Volunteer.all, :id, :full_name), include_blank: true %>
+        </div>
+        <%= hidden_field_tag 'volunteer_assignment[status]', 'approved' %>
+        <div>
+          <%= f.submit 'Assign (approve)' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <% if defined?(current_volunteer) && current_volunteer %>
     <% assignment = current_volunteer.volunteer_assignments.find_by(event: event) %>
     <div>
@@ -51,6 +68,16 @@
         <em>Your status:</em> <%= assignment.status %>
         <% if assignment.status != 'completed' %>
           <%= button_to 'Withdraw', volunteer_assignment_path(assignment), method: :delete %>
+          <% if assignment.status == 'approved' %>
+            <%= form_with model: assignment, local: true do |f| %>
+              <%= f.hidden_field :status, value: 'completed' %>
+              <div>
+                <%= f.label :hours_worked, 'Hours worked' %>
+                <%= f.number_field :hours_worked, step: 0.25 %>
+              </div>
+              <%= f.submit 'Mark completed' %>
+            <% end %>
+          <% end %>
         <% end %>
       <% elsif event.open? && event.slots_available? %>
         <%= form_with url: volunteer_assignments_path, local: true do |f| %>

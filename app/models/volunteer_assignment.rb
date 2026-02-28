@@ -3,11 +3,15 @@ class VolunteerAssignment < ApplicationRecord
   belongs_to :event
 
   STATUSES = %w[pending approved completed cancelled].freeze
-  validates :status, inclusion: { in: STATUSES }
+  validates :status, presence: true, inclusion: { in: STATUSES }
+  validates :volunteer, presence: true
+  validates :event, presence: true
   validates :hours_worked, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   validate :not_already_signed_up, on: :create
   validate :hours_within_event_duration, if: -> { hours_worked.present? && status == "completed" }
+  validate :date_logged_present_if_completed
+  validate :approve_only_if_slots_available
 
   after_save :update_event_status!
   after_destroy :update_event_status!
@@ -26,6 +30,20 @@ class VolunteerAssignment < ApplicationRecord
     duration = ((event.end_time - event.start_time) / 1.hour).abs
     if hours_worked > duration
       errors.add(:hours_worked, "cannot exceed event duration (#{duration} hours)")
+    end
+  end
+
+  def date_logged_present_if_completed
+    if status == "completed" && date_logged.blank?
+      errors.add(:date_logged, "must be present when marking completed")
+    end
+  end
+
+  def approve_only_if_slots_available
+    return unless status == "approved" && event
+
+    unless event.slots_available?
+      errors.add(:status, "cannot be approved — no slots available")
     end
   end
 

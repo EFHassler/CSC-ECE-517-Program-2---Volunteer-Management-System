@@ -1,15 +1,127 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @volunteer %>
-
-<div>
-  <%= link_to "Edit this volunteer", edit_volunteer_path(@volunteer) %> |
-  <%= link_to "Available events", available_events_path %> |
-  <%= link_to "My assignments", volunteer_assignments_path %> |
-  <%= link_to "Back", (volunteer_signed_in? ? volunteer_path(current_volunteer) : root_path) %>
-  <% if admin_signed_in? && !volunteer_signed_in? %>
-    | <%= link_to "Back to Admin", admin_path %>
+<div style="max-width: 1000px; margin: 0 auto;">
+  <% if volunteer_signed_in? && current_volunteer == @volunteer %>
+    <h1>My Profile</h1>
+  <% else %>
+    <h1><%= @volunteer.full_name %>'s Profile</h1>
   <% end %>
 
-  <%= button_to "Destroy this volunteer", @volunteer, method: :delete %>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+    <!-- Profile Info -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: white;">
+      <h2 style="margin-top: 0; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Profile Information</h2>
+      <p style="margin: 12px 0;"><strong>Name:</strong> <%= @volunteer.full_name %></p>
+      <p style="margin: 12px 0;"><strong>Username:</strong> <%= @volunteer.username %></p>
+      <p style="margin: 12px 0;"><strong>Email:</strong> <%= @volunteer.email %></p>
+      <p style="margin: 12px 0;"><strong>Phone:</strong> <%= @volunteer.phone || "Not provided" %></p>
+      <p style="margin: 12px 0;"><strong>Address:</strong> <%= @volunteer.address || "Not provided" %></p>
+      <p style="margin: 12px 0;"><strong>Skills:</strong> <%= @volunteer.skills || "Not provided" %></p>
+      
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+        <% if volunteer_signed_in? && current_volunteer == @volunteer %>
+          <%= link_to "Edit Profile", edit_volunteer_path(@volunteer), style: "padding: 8px 12px; background-color: #667eea; color: white; text-decoration: none; border-radius: 5px; display: inline-block;" %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: white;">
+      <h2 style="margin-top: 0; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Volunteering Stats</h2>
+      <div style="text-align: center; padding: 20px;">
+        <div style="font-size: 48px; color: #667eea; font-weight: bold; margin-bottom: 8px;">
+          <%= @volunteer.total_hours.round(1) %>
+        </div>
+        <div style="color: #666; font-size: 16px;">Total Hours</div>
+      </div>
+      <p style="margin: 12px 0; padding: 8px; background-color: #f5f5f5; border-radius: 4px;">
+        <strong>Pending/Approved:</strong> <%= @volunteer.volunteer_assignments.where(status: %w[pending approved]).count %>
+      </p>
+      <p style="margin: 12px 0; padding: 8px; background-color: #f5f5f5; border-radius: 4px;">
+        <strong>Completed:</strong> <%= @volunteer.volunteer_assignments.where(status: 'completed').count %>
+      </p>
+    </div>
+  </div>
+
+  <!-- Current Assignments -->
+  <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: white; margin-top: 20px;">
+    <h2 style="margin-top: 0; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Current Assignments</h2>
+    
+    <% if @volunteer.volunteer_assignments.where.not(status: 'completed').any? %>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+          <tr>
+            <th style="padding: 12px; text-align: left;">Event</th>
+            <th style="padding: 12px; text-align: left;">Date</th>
+            <th style="padding: 12px; text-align: left;">Status</th>
+            <% if volunteer_signed_in? && current_volunteer == @volunteer %>
+              <th style="padding: 12px; text-align: left;">Actions</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @volunteer.volunteer_assignments.where.not(status: 'completed').each do |assignment| %>
+            <tr style="border-bottom: 1px solid #ddd;">
+              <td style="padding: 12px;"><%= assignment.event&.title %></td>
+              <td style="padding: 12px;"><%= assignment.event&.event_date&.strftime("%b %d, %Y") %></td>
+              <td style="padding: 12px;">
+                <span style="background-color: <%= assignment.status == 'approved' ? '#d4edda' : '#fff3cd' %>; padding: 4px 8px; border-radius: 4px;">
+                  <%= assignment.status.upcase %>
+                </span>
+              </td>
+              <% if volunteer_signed_in? && current_volunteer == @volunteer %>
+                <td style="padding: 12px;">
+                  <%= button_to "Withdraw", volunteer_assignment_path(assignment), method: :delete, 
+                      data: { confirm: "Are you sure?" }, 
+                      style: "padding: 6px 10px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;" %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p style="color: #666; margin-top: 12px;">No active assignments.</p>
+    <% end %>
+  </div>
+
+  <!-- Volunteering History -->
+  <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: white; margin-top: 20px;">
+    <h2 style="margin-top: 0; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Volunteering History</h2>
+    
+    <% if @volunteer.volunteer_assignments.where(status: 'completed').any? %>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+          <tr>
+            <th style="padding: 12px; text-align: left;">Event</th>
+            <th style="padding: 12px; text-align: left;">Hours</th>
+            <th style="padding: 12px; text-align: left;">Date Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @volunteer.volunteer_assignments.where(status: 'completed').each do |assignment| %>
+            <tr style="border-bottom: 1px solid #ddd;">
+              <td style="padding: 12px;"><%= assignment.event&.title %></td>
+              <td style="padding: 12px;"><strong><%= assignment.hours_worked %> hrs</strong></td>
+              <td style="padding: 12px;"><%= assignment.date_logged&.strftime("%b %d, %Y") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p style="color: #666; margin-top: 12px;">No completed events yet.</p>
+    <% end %>
+  </div>
+
+  <!-- Navigation -->
+  <div style="margin-top: 30px; text-align: center;">
+    <% if volunteer_signed_in? && current_volunteer == @volunteer %>
+      <%= link_to "Browse Events", available_events_path, style: "padding: 10px 16px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;" %>
+    <% end %>
+    <% if admin_signed_in? %>
+      <%= link_to "← Back to Admin", admin_path, style: "padding: 10px 16px; background-color: #667eea; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;" %>
+    <% elsif volunteer_signed_in? && current_volunteer == @volunteer %>
+      <%= link_to "← Back", available_events_path, style: "padding: 10px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; display: inline-block;" %>
+    <% end %>
+  </div>
 </div>

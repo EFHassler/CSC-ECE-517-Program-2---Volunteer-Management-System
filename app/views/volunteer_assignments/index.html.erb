@@ -2,18 +2,72 @@
 
 <% content_for :title, "Volunteer assignments" %>
 
-<h1>Volunteer assignments</h1>
+<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+  <h1>Volunteer Assignments</h1>
 
-<div id="volunteer_assignments">
-  <% @volunteer_assignments.each do |volunteer_assignment| %>
-    <%= render volunteer_assignment %>
-    <p>
-      <%= link_to "Show this volunteer assignment", volunteer_assignment %>
-    </p>
+  <% if admin_signed_in? %>
+    <div style="margin-bottom: 20px;">
+      <%= link_to "View Pending Assignments", admin_pending_assignments_path, style: "padding: 8px 16px; background-color: #ffc107; color: white; text-decoration: none; border-radius: 5px; display: inline-block;" %>
+    </div>
   <% end %>
-</div>
 
-<%= link_to "New volunteer assignment", new_volunteer_assignment_path %>
-<% if admin_signed_in? && !volunteer_signed_in? %>
-  | <%= link_to "Back to Admin", admin_path %>
-<% end %>
+  <% if @volunteer_assignments.any? %>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+        <tr>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Volunteer</th>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Event</th>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Status</th>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Hours</th>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Date Logged</th>
+          <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @volunteer_assignments.each do |assignment| %>
+          <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px; border: 1px solid #ddd;">
+              <%= link_to assignment.volunteer.full_name, volunteer_path(assignment.volunteer), style: "color: #007bff; text-decoration: none;" %>
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+              <%= link_to assignment.event.title, event_path(assignment.event), style: "color: #007bff; text-decoration: none;" %>
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+              <span style="padding: 2px 8px; border-radius: 3px; <%= case assignment.status
+                when 'pending' then 'background-color: #ffc107; color: white;'
+                when 'approved' then 'background-color: #28a745; color: white;'
+                when 'completed' then 'background-color: #007bff; color: white;'
+                when 'cancelled' then 'background-color: #dc3545; color: white;'
+                end %>">
+                <%= assignment.status.capitalize %>
+              </span>
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+              <%= assignment.hours_worked || "—" %>
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+              <%= assignment.date_logged&.strftime("%b %d, %Y") || "—" %>
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+              <%= link_to "View", volunteer_assignment_path(assignment), style: "color: #007bff; text-decoration: none;" %>
+              <% if admin_signed_in? %>
+                | <%= link_to "Edit", edit_volunteer_assignment_path(assignment), style: "color: #28a745; text-decoration: none;" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p style="margin-top: 20px; color: #666;">No volunteer assignments yet.</p>
+  <% end %>
+
+  <div style="margin-top: 20px;">
+    <% if admin_signed_in? %>
+      <%= link_to "New volunteer assignment", new_volunteer_assignment_path, style: "padding: 8px 16px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block;" %>
+    <% end %>
+    <% if admin_signed_in? && !volunteer_signed_in? %>
+      <%= link_to "← Back to Admin", admin_path, style: "padding: 8px 16px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 10px;" %>
+    <% end %>
+  </div>
+</div>

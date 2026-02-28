@@ -1,11 +1,54 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @admin %>
+<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+  <h1>Admin Dashboard</h1>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+    <!-- Events Management -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+      <h2 style="margin-top: 0;">Events Management</h2>
+      <p style="color: #666; margin-bottom: 15px;">Create, edit, and manage volunteer events.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <%= link_to "View All Events", events_path, style: "padding: 8px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;" %>
+        <%= link_to "Create New Event", new_event_path, style: "padding: 8px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;" %>
+      </div>
+    </div>
 
-<div>
-  <%= link_to "Edit this admin", edit_admin_path(@admin) %> |
-  <%= link_to "View volunteers", volunteers_path %> |
-  <%= link_to "View events", events_path %> |
-  <%= link_to "View assignments", volunteer_assignments_path %> |
-  <%= link_to "Back to admins", admins_path %>
+    <!-- Volunteers Management -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+      <h2 style="margin-top: 0;">Volunteers Management</h2>
+      <p style="color: #666; margin-bottom: 15px;">View and manage volunteer profiles.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <%= link_to "View All Volunteers", volunteers_path, style: "padding: 8px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;" %>
+      </div>
+    </div>
+
+    <!-- Assignments Management -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+      <h2 style="margin-top: 0;">Assignment Approval</h2>
+      <p style="color: #666; margin-bottom: 15px;">Review and approve pending volunteer assignments.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <%= link_to "Pending Assignments", admin_pending_assignments_path, style: "padding: 8px 12px; background-color: #ffc107; color: white; text-decoration: none; border-radius: 5px;" %>
+        <%= link_to "All Assignments", volunteer_assignments_path, style: "padding: 8px 12px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;" %>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+      <h2 style="margin-top: 0;">Analytics & Reports</h2>
+      <p style="color: #666; margin-bottom: 15px;">View volunteer hours and event statistics.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <%= link_to "View Analytics", analytics_path, style: "padding: 8px 12px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 5px;" %>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+      <h2 style="margin-top: 0;">Account Settings</h2>
+      <p style="color: #666; margin-bottom: 15px;">Edit your admin profile.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <%= link_to "Edit Profile", edit_admin_profile_path, style: "padding: 8px 12px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;" %>
+      </div>
+    </div>
+  </div>
 </div>

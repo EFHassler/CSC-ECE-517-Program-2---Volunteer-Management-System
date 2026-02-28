@@ -2,16 +2,64 @@
 
 <% content_for :title, "Events" %>
 
-<h1>Events</h1>
+<h1><%= admin_signed_in? ? "All Events" : "Available Events" %></h1>
 
-<div id="events">
+<% if admin_signed_in? %>
+  <div style="margin-bottom: 20px;">
+    <%= link_to "Create New Event", new_event_path, style: "padding: 10px 16px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block;" %>
+  </div>
+<% end %>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
   <% @events.each do |event| %>
-    <%= render event %>
-    <p>
-      <%= link_to "Show this event", event %>
-    </p>
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column;">
+      <h3 style="margin-top: 0; color: #667eea;"><%= event.title %></h3>
+      <p style="color: #666; margin-bottom: 12px; font-size: 14px;">
+        <strong>Date:</strong> <%= event.event_date&.strftime("%b %d, %Y") || "TBD" %><br>
+        <strong>Time:</strong> <%= event.start_time&.strftime("%I:%M %p") || "TBD" %> - <%= event.end_time&.strftime("%I:%M %p") || "TBD" %><br>
+        <strong>Location:</strong> <%= event.location %>
+      </p>
+      <p style="color: #666; margin-bottom: 12px; font-size: 14px;">
+        <strong>Description:</strong> <%= truncate(event.description, length: 100) %>
+      </p>
+      <p style="margin-bottom: 12px; font-size: 14px;">
+        <strong>Volunteers needed:</strong> 
+        <span style="background-color: #e7f3ff; padding: 4px 8px; border-radius: 4px;">
+          <%= event.required_volunteers %> / <%= event.approved_assignments_count %>
+        </span>
+      </p>
+      <p style="color: <%= event.status == 'full' ? '#dc3545' : '#28a745' %>; margin-bottom: 12px; font-weight: bold;">
+        Status: <%= event.status.upcase %>
+      </p>
+
+      <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid #eee;">
+        <% if admin_signed_in? %>
+          <%= link_to "Edit", edit_event_path(event), style: "color: #667eea; text-decoration: none; margin-right: 12px;" %> |
+          <%= link_to "Delete", event_path(event), method: :delete, data: { confirm: "Are you sure?" }, style: "color: #dc3545; text-decoration: none;" %>
+        <% elsif volunteer_signed_in? %>
+          <% if current_volunteer.volunteer_assignments.exists?(event: event, status: %w[pending approved]) %>
+            <span style="color: #666; font-size: 14px;">✓ You're signed up</span>
+          <% elsif event.open? && event.slots_available? %>
+            <%= button_to "Sign Up", volunteer_assignments_path, method: :post, params: { volunteer_assignment: { event_id: event.id } }, style: "padding: 8px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block; border: none; cursor: pointer;" %>
+          <% end %>
+        <% elsif event.open? && event.slots_available? %>
+          <%= link_to "Sign Up", login_path, style: "padding: 8px 12px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block;" %>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New event", new_event_path %> |
-<%= link_to "Back to Admin", admin_path %>
+<% if @events.empty? %>
+  <div style="text-align: center; padding: 40px; color: #999;">
+    <p style="font-size: 18px;">No events available.</p>
+  </div>
+<% end %>
+
+<div style="margin-top: 30px;">
+  <% if admin_signed_in? %>
+    <%= link_to "← Back to Admin", admin_path %>
+  <% else %>
+    <%= link_to "← Back", root_path %>
+  <% end %>
+</div>
