@@ -202,5 +202,7 @@ RSpec validation testing of Volunteer class model aspects:
 - Volunteer class methods (total_hours, completed_hours)
 
 RSpec testing of Volunteer class controller:
-- New
-- Create
+- Checks that admin can successfully log in
+- Checks that volunteer can successfully log in
+- Checks that volunteer can delete own account
+- Checks that admin can delete volunteer accounts
